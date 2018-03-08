@@ -1,0 +1,59 @@
+{
+    "fields": [
+        {
+            "id": "a",
+            "label": "Year",
+            "type": "string"
+        },
+        {
+            "id": "b",
+            "label": "Geographical Area in Sq. Km.",
+            "type": "string"
+        },
+        {
+            "id": "c",
+            "label": "Tree Cover Area in Sq. Km.",
+            "type": "string"
+        },
+        {
+            "id": "d",
+            "label": "%  Tree Cover to Geographical Area",
+            "type": "string"
+        },
+        {
+            "id": "e",
+            "label": null,
+            "type": "string"
+        }
+    ],
+    "data": [
+        [
+            2011,
+            3287263,
+            90844,
+            2.76,
+            null
+        ],
+        [
+            2009,
+            3287263,
+            92769,
+            2.82,
+            null
+        ],
+        [
+            2005,
+            3287263,
+            91663,
+            2.79,
+            null
+        ],
+        [
+            2003,
+            3287263,
+            99896,
+            3.04,
+            null
+        ]
+    ]
+}
