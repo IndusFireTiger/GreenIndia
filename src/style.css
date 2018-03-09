@@ -30,25 +30,19 @@ ul {
     padding: 0;
 }
 
-#nav-ul li {
+nav a {
     float: left;
-    padding: 30px;
     height: 50px;
     padding: 10px 10px;
     text-decoration: none;
-}
-
-#nav-ul li a {
-    display: block;
+    display: inline;
     color: white;
-    width: 120px;
-    text-align: center;
     font-size: 14pt;
     padding: 10px 10px;
     text-decoration: none;
 }
 
-#nav-ul li:hover {
+nav a:hover {
     background: rgb(6, 110, 6);
 }
 
@@ -73,11 +67,12 @@ ul {
     background-color: #4CAF50;
 }
 
-#states-list {
+#states-list a {
     padding-left: 15px;
+    display: block;
 }
 
-#states-list li:before {
+#states-list a:before {
     content: "• "
 }
 

@@ -6,7 +6,7 @@ function populateStates() {
             throw error
         }
         for (let i = 0; i < stateData.data.length; i++) {
-            var li = document.createElement("li")
+            var li = document.createElement("a")
             li.setAttribute("id", i)
             li.addEventListener("click", plotStateGraph)
             li.appendChild(document.createTextNode(stateData.data[i][0]))
@@ -55,14 +55,14 @@ function plotOverviewGraph() {
 
         let xAxis_g = g.append("g")
             .attr("transform", "translate(0," + height + ")")     
-        xAxis_g.call(d3.axisBottom(xScale)) // returns a function which is then called with child g as a parameter
+        xAxis_g.call(d3.axisBottom(xScale))
         xAxis_g.append("text")
             .style("text-anchor", "middle")
-            .text("% of Forest Cover")
+            .text("Year")
       
         let yAxis_g = g.append("g")
         yAxis_g.call(d3.axisLeft(yScale).ticks(5))
-        yAxis_g.append("text") // element
+        yAxis_g.append("text")
             .style("text-anchor", "middle")
             .text("% of Forest Cover")
             
