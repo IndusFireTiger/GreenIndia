@@ -34,44 +34,44 @@ function plotOverviewGraph() {
         margin = 200,
         width = svg.attr("width") - margin,
         height = svg.attr("height") - margin
-
-    let xScale = d3.scaleBand().range([0, width]).padding(0.5),
-        yScale = d3.scaleLinear().range([height, 0])
-
+    
     let g = svg.append("g")
         .attr("transform", "translate(100, 100)")
-
 
     d3.csv("Total Tree Cover in India.csv", function (error, data) {
         if (error) {
             throw error
         }
 
-        xScale.domain(data.map(function (d) {
+        let xScale = d3.scaleBand().padding(0.5),
+            yScale = d3.scaleLinear()
+
+        xScale.range([0, width]).domain(data.map(function (d) {
             return d.year
         }))
 
-        yScale.domain([0, 1 + parseInt(d3.max(data, function (d) {
+        yScale.range([height, 0]).domain([0, 1 + parseInt(d3.max(data, function (d) {
             return d.share_TreeCover
         }))])
 
         let xAxis_g = g.append("g")
-            .attr("transform", "translate(0," + height + ")")
-            .text("Year")
-
+            .attr("transform", "translate(0," + height + ")")     
         xAxis_g.call(d3.axisBottom(xScale)) // returns a function which is then called with child g as a parameter
-
-        let yAxis_g = g.append("g")
-
-        yAxis_g.call(d3.axisLeft(yScale).ticks(5))
-
-        yAxis_g.append("text") // element
+        xAxis_g.append("text")
+            .style("text-anchor", "middle")
             .text("% of Forest Cover")
-
-        g.selectAll(".bar")
-            .data(data)
+      
+        let yAxis_g = g.append("g")
+        yAxis_g.call(d3.axisLeft(yScale).ticks(5))
+        yAxis_g.append("text") // element
+            .style("text-anchor", "middle")
+            .text("% of Forest Cover")
+            
+        let bars = g.selectAll(".chart")
+        
+        bars.data(data)
             .enter().append("rect")
-            .attr("class", "bar")
+            .attr("class", "chart")
             .attr("x", function (d) {
                 return xScale(d.year)
             })
