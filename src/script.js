@@ -21,8 +21,7 @@ let plotStateGraph = function (state) {
         if (error) {
             throw error
         }
-
-        // console.log(stateData[state.target.id])
+        
         console.log(stateData.data[state.target.id])
         let svg = d3.select("svg")
         console.log(svg)
