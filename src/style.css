@@ -1,23 +1,27 @@
 body {
-    height: 90%;
+    /* height: 90%; */
     /* width: 80%; */
     /* text-align: center; */
     margin: 0;
 }
 
-header, footer {
+header {
     height: 10%;
-    background-color: rgb(230, 248, 230)
+    background-color: rgb(230, 248, 230);
 }
 
+footer {
+    height: 5%;
+    background-color: rgb(3, 71, 3);
+}
 nav {
     height: 70px;
-    background-color: rgb(3, 71, 3)
+    background-color: rgb(3, 71, 3);
 }
 
 main {
     height: 90%;
-    background-color: rgb(245, 247, 248)
+    background-color: rgb(245, 247, 248);
 }
 
 ul {
@@ -67,5 +71,13 @@ ul {
 
 .active {
     background-color: #4CAF50;
+}
+
+#states-list {
+    padding-left: 15px;
+}
+
+#states-list li:before {
+    content: "• "
 }
 

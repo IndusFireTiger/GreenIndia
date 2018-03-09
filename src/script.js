@@ -9,7 +9,7 @@ function populateStates() {
             var li = document.createElement("li")
             li.setAttribute("id", i)
             li.addEventListener("click", plotStateGraph)
-            li.appendChild(document.createTextNode(stateData.data[i][0] + " - " + stateData.data[i][6] + " %"))
+            li.appendChild(document.createTextNode(stateData.data[i][0]))
             states.appendChild(li)
         }
     })
