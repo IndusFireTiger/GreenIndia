@@ -37,7 +37,7 @@ ul {
 #nav-ul li a {
     display: block;
     color: white;
-    width: 100px;
+    width: 120px;
     text-align: center;
     font-size: 14pt;
     padding: 10px 10px;
@@ -63,5 +63,9 @@ ul {
 
 .content {
     padding: 10px;
+}
+
+.active {
+    background-color: #4CAF50;
 }
 

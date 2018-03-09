@@ -7,14 +7,29 @@ function populateStates() {
         }
         for (let i = 0; i < stateData.data.length; i++) {
             var li = document.createElement("li")
-            li.appendChild(document.createTextNode(stateData.data[i][0]))
+            li.setAttribute("id", i)
+            li.addEventListener("click", plotStateGraph)
+            li.appendChild(document.createTextNode(stateData.data[i][0] + " - " + stateData.data[i][6] + " %"))
             states.appendChild(li)
         }
-
     })
 }
 
-function plotOverview() {
+let plotStateGraph = function (state) {
+    console.log(state.target.id)
+    d3.json("States_wise_data.json", function (error, stateData) {
+        if (error) {
+            throw error
+        }
+
+        // console.log(stateData[state.target.id])
+        console.log(stateData.data[state.target.id])
+        let svg = d3.select("svg")
+        console.log(svg)
+    })
+}
+
+function plotOverviewGraph() {
     let svg = d3.select("svg"),
         margin = 200,
         width = svg.attr("width") - margin,
@@ -70,9 +85,9 @@ function plotOverview() {
     })
 }
 
-function populateOverview(){
+function populateOverview() {
     populateStates()
-    plotOverview()
+    plotOverviewGraph()
 }
 
 populateOverview()
