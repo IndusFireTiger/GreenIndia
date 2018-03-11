@@ -84,9 +84,63 @@ function plotOverviewGraph() {
     })
 }
 
-function populateOverview() {
-    populateStates()
-    plotOverviewGraph()
+function plotIndiaMap(){
+    console.log("ploting India Map")
+    var w = 600;
+    var h = 600;
+    var proj = d3.geo.mercator();
+    var path = d3.geo.path().projection(proj);
+    var t = proj.translate(); // the projection's default translation
+    var s = proj.scale() // the projection's default scale
+
+    var map = d3.select("#chart").append("svg:svg")
+        .attr("width", w)
+        .attr("height", h)
+    //        .call(d3.behavior.zoom().on("zoom", redraw))
+        .call(initialize);
+    console.log(map)
+    var india = map.append("svg:g")
+        .attr("id", "india");
+
+    
+    d3.json("states.json", function (json) {
+      india.selectAll("path")
+          .data(json.features)
+        .enter().append("path")
+          .attr("d", path);
+        console.log(json)
+    });
+
+    function initialize() {
+      proj.scale(6700);
+      proj.translate([-1240, 720]);
+      console.log("done")
+    }
 }
 
+function populateOverview() {
+    // populateStates()
+    plotOverviewGraph()
+    plotIndiaMap()
+}
+
+
 populateOverview()
+
+function tabAction(event, where){
+    console.log(event + " occured on " + where)
+    console.log("url:"+document.URL)
+    // function openCity(evt, cityName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tabLinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(where).style.display = "block";
+        evt.currentTarget.className += " active";
+    // }
+}

@@ -6,40 +6,89 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Indian Forests - a Report</title>
     <script src="https://d3js.org/d3.v4.min.js"></script>
+    <!-- <script type="text/javascript" src="d3.min.js"></script> -->
+    <script type="text/javascript" src="d3.geo.min.js"></script>
     <link type="text/css" rel="stylesheet" href="style.css" />
+    <!-- <link type="text/css" rel="stylesheet" href="colorbrewer.css" /> -->
 </head>
 
 <body>
     <header></header>
-    <nav>
-        <!-- <ul id="nav-ul"> -->
-            <a href="#overview">Overview</a>
-            <!-- <li> -->
-                <a href="#physiography">Physiograhic</a>
-            <!-- </li>
-            <li> -->
-                <a href="#flora">Flora</a>
-            <!-- </li>
-            <li> -->
-                <a href="#fauna">Fauna</a>
-            <!-- </li> -->
-        <!-- </ul> -->
+    <nav id="nav-list">
+        <a href="#overview" class="tabLinks" onclick="tabAction(event, 'overview')">Overview</a>
+        <a href="#physiography" class="tabLinks" onclick="tabAction(event, 'physiography')">Physiograhic</a>
+        <a href="#flora" class="tabLinks" onclick="tabAction(event, 'flora')">Flora</a>
+        <a href="#fauna" class="tabLinks" onclick="tabAction(event, 'fauna')">Fauna</a>
     </nav>
     <main>
-        <section id="section-left">
-            <div class="content" id="section-list">
-                States
-                    <div id="states-list">
+        <div id="overview" class="content">
+            <section id="section-left">
+                <div >
+                    States
+                    <div id="chart">
                     </div>
-            </div>
-        </section>
-        <section id="section-right">
-            <div class="content" id="section-graph">
-                <div>
-                    <svg width="700" height="500"></svg>
                 </div>
-            </div>
-        </section>
+            </section>
+            <section id="section-right">
+                <div>
+                    Graph
+                    <div>
+                        <svg id="svg-graph" width="700" height="500"></svg>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div id="physiography" class="content">
+                <section id="section-left">
+                    <div >
+                        Physiography Map
+                        <div id="chart">
+                        </div>
+                    </div>
+                </section>
+                <section id="section-right">
+                    <div>
+                        Physiography Graph
+                        <div>
+                            <svg id="svg-graph" width="700" height="500"></svg>
+                        </div>
+                    </div>
+                </section>
+        </div>
+        <div id="flora" class="content">
+                <section id="section-left">
+                    <div >
+                        Flora Map
+                        <div id="chart">
+                        </div>
+                    </div>
+                </section>
+                <section id="section-right">
+                    <div>
+                        Flora Graph
+                        <div>
+                            <svg id="svg-graph" width="700" height="500"></svg>
+                        </div>
+                    </div>
+                </section>
+        </div>
+        <div id="fauna" class="content">
+                <section id="section-left">
+                    <div >
+                        Fauna Map
+                        <div id="chart">
+                        </div>
+                    </div>
+                </section>
+                <section id="section-right">
+                    <div>
+                        Fauna Graph
+                        <div>
+                            <svg id="svg-graph" width="700" height="500"></svg>
+                        </div>
+                    </div>
+                </section>
+        </div>
     </main>
     <footer></footer>
     <script src="script.js">
