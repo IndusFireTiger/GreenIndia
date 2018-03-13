@@ -22,6 +22,13 @@ let plotStateGraph = function (state) {
             throw error
         }
         console.log(state+" to find")
+        let svg = d3.selectAll('svg')
+        let gs = svg.selectAll('g').selectAll('g')
+        let bars = svg.selectAll("rect.bar")
+
+        gs.data([]).exit().remove()
+        bars.data([]).exit().remove()
+        // document.getElementById('svg-graph').style.display ='none'
         for(let i = 0; i < stateData.data.length; i++){
             console.log(stateData.data[i][0])
             if(stateData.data[i][0] === state){
@@ -30,9 +37,7 @@ let plotStateGraph = function (state) {
                 break
             }
         }
-        // console.log(stateData.data[state])
-        // let svg = d3.select("svg")
-        // console.log(svg)
+        // draw a pie chart
     })
 }
 
@@ -72,11 +77,11 @@ function plotOverviewGraph() {
             .style("text-anchor", "middle")
             .text("% of Forest Cover")
 
-        let bars = g.selectAll(".chart")
+        let bars = g.selectAll(".bar")
 
         bars.data(data)
             .enter().append("rect")
-            .attr("class", "chart")
+            .attr("class", "bar")
             .on("mouseover", onMouseOver)
             .on("mouseout", onMouseOut)
             .attr("x", function (d) {
