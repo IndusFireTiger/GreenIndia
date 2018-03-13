@@ -16,15 +16,23 @@ function populateStates() {
 }
 
 let plotStateGraph = function (state) {
-    console.log(state.target.id)
+    console.log(state)
     d3.json("States_wise_data.json", function (error, stateData) {
         if (error) {
             throw error
         }
-        
-        console.log(stateData.data[state.target.id])
-        let svg = d3.select("svg")
-        console.log(svg)
+        console.log(state+" to find")
+        for(let i = 0; i < stateData.data.length; i++){
+            console.log(stateData.data[i][0])
+            if(stateData.data[i][0] === state){
+                console.log("found")
+                console.log("Data: "+stateData.data[i])
+                break
+            }
+        }
+        // console.log(stateData.data[state])
+        // let svg = d3.select("svg")
+        // console.log(svg)
     })
 }
 
@@ -33,7 +41,8 @@ function plotOverviewGraph() {
         margin = 200,
         width = svg.attr("width") - margin,
         height = svg.attr("height") - margin
-    
+    let xScale = d3.scaleBand().padding(0.5),
+        yScale = d3.scaleLinear()
     let g = svg.append("g")
         .attr("transform", "translate(100, 100)")
 
@@ -41,9 +50,6 @@ function plotOverviewGraph() {
         if (error) {
             throw error
         }
-
-        let xScale = d3.scaleBand().padding(0.5),
-            yScale = d3.scaleLinear()
 
         xScale.range([0, width]).domain(data.map(function (d) {
             return d.year
@@ -54,23 +60,25 @@ function plotOverviewGraph() {
         }))])
 
         let xAxis_g = g.append("g")
-            .attr("transform", "translate(0," + height + ")")     
+            .attr("transform", "translate(0," + height + ")")
         xAxis_g.call(d3.axisBottom(xScale))
         xAxis_g.append("text")
             .style("text-anchor", "middle")
             .text("Year")
-      
+
         let yAxis_g = g.append("g")
         yAxis_g.call(d3.axisLeft(yScale).ticks(5))
         yAxis_g.append("text")
             .style("text-anchor", "middle")
             .text("% of Forest Cover")
-            
+
         let bars = g.selectAll(".chart")
-        
+
         bars.data(data)
             .enter().append("rect")
             .attr("class", "chart")
+            .on("mouseover", onMouseOver)
+            .on("mouseout", onMouseOut)
             .attr("x", function (d) {
                 return xScale(d.year)
             })
@@ -82,40 +90,106 @@ function plotOverviewGraph() {
                 return height - yScale(d.share_TreeCover)
             })
     })
+
+    function onMouseOver(d, i) {
+        d3.select(this).attr('class', 'highlight_bar')
+        d3.select(this)
+            .transition()
+            .duration(400)
+            .attr('width', xScale.bandwidth() + 5)
+            .attr("y", function (d) {
+                return yScale(d.share_TreeCover) - 10
+            })
+            .attr("height", function (d) {
+                return height - yScale(d.share_TreeCover) + 10
+            })
+
+        g.append("text")
+            .attr('class', 'val')
+            .attr('x', function () {
+                return xScale(d.year)
+            })
+            .attr('y', function () {
+                return yScale(d.share_TreeCover) - 15
+            })
+            .text(function () {
+                return [d.share_TreeCover + " %"]
+            })
+    }
+
+    function onMouseOut(d, i) {
+        d3.select(this).attr('class', 'bar')
+        d3.select(this)
+            .transition()
+            .duration(400)
+            .attr('width', xScale.bandwidth())
+            .attr("y", function (d) {
+                return yScale(d.share_TreeCover)
+            })
+            .attr("height", function (d) {
+                return height - yScale(d.share_TreeCover)
+            })
+
+        d3.selectAll('.val')
+            .remove()
+    }
 }
 
-function plotIndiaMap(){
-    console.log("ploting India Map")
-    var w = 600;
-    var h = 600;
-    var proj = d3.geo.mercator();
-    var path = d3.geo.path().projection(proj);
-    var t = proj.translate(); // the projection's default translation
-    var s = proj.scale() // the projection's default scale
+function plotIndiaMap() {
+    var w = 600
+    var h = 600
+    var proj = d3.geo.mercator()
+    var path = d3.geo.path().projection(proj)
+    var t = proj.translate()
+    var s = proj.scale()
 
     var map = d3.select("#chart").append("svg:svg")
         .attr("width", w)
         .attr("height", h)
-    //        .call(d3.behavior.zoom().on("zoom", redraw))
-        .call(initialize);
-    console.log(map)
-    var india = map.append("svg:g")
-        .attr("id", "india");
+        .call(initialize)
 
-    
+    var india = map.append("svg:g")
+        .attr("id", "india")
+    var svg = d3.select("svg")
+
+    var tooltip = d3.select("#chart").append("div").attr("class", "tooltip hidden")
+    var offsetL = document.getElementById('chart').offsetLeft + 10
+    var offsetT = document.getElementById('chart').offsetTop + -30
+
     d3.json("states.json", function (json) {
-      india.selectAll("path")
-          .data(json.features)
-        .enter().append("path")
-          .attr("d", path);
-        console.log(json)
-    });
+        states = json.features
+        india.selectAll("path")
+            .data(states)
+            .enter().append("path")
+            .attr("d", path)
+            .attr("title", function (d, i) {
+                return d.id
+            })
+            .on("mousemove", function (d, i) {
+                d3.select(this).attr('class', 'highlight_state')
+                var mouse = d3.mouse(svg.node()).map(function (d) {
+                    return parseInt(d)
+                })
+                tooltip.classed("hidden", false)
+                    .attr("style", "left:" + (mouse[0] + offsetL) + "px;top:" + (mouse[1] + offsetT) + "px")
+                    .html(d.id)
+            })
+            .on("mouseout", function (d, i) {
+                d3.select(this).attr('class', '')
+                tooltip.classed("hidden", true)
+            })
+            .on("click", function (d, i) {
+                console.log(d.id + " was clicked")
+                // invoke func to plot state graph
+                plotStateGraph(d.id)
+            })
+    })
 
     function initialize() {
-      proj.scale(6700);
-      proj.translate([-1240, 720]);
-      console.log("done")
+        proj.scale(6700)
+        proj.translate([-1240, 720])
     }
+    
 }
 
 function populateOverview() {
@@ -127,20 +201,18 @@ function populateOverview() {
 
 populateOverview()
 
-function tabAction(event, where){
-    console.log(event + " occured on " + where)
-    console.log("url:"+document.URL)
-    // function openCity(evt, cityName) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("content");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tabLinks");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(where).style.display = "block";
-        evt.currentTarget.className += " active";
+function tabAction(event, where) {
+    // console.log(event + " occured on " + where)
+    // console.log("url:" + document.URL)
+    // var i, tabcontent, tablinks
+    // tabcontent = document.getElementsByClassName("content")
+    // for (i = 0 i < tabcontent.length; i++) {
+    //     tabcontent[i].style.display = "none"
     // }
+    // tablinks = document.getElementsByClassName("tabLinks")
+    // for (i = 0; i < tablinks.length; i++) {
+    //     tablinks[i].className = tablinks[i].className.replace(" active", "")
+    // }
+    // document.getElementById(where).style.display = "block"
+    // evt.currentTarget.className += " active"
 }
