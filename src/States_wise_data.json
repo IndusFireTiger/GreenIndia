@@ -12,22 +12,22 @@
         },
         {
             "id": "c",
-            "label": "2013 Assessment - Very Dense Forest",
+            "label": "Very Dense Forest",
             "type": "string"
         },
         {
             "id": "d",
-            "label": "2013 Assessment - Mod. Dense Forest",
+            "label": "Mod. Dense Forest",
             "type": "string"
         },
         {
             "id": "e",
-            "label": "2013 Assessment - Open Forest Forest",
+            "label": "Open Forest Forest",
             "type": "string"
         },
         {
             "id": "f",
-            "label": "2013 Assessment - Total Forest Forest",
+            "label": "Total Forest Forest",
             "type": "string"
         },
         {
@@ -173,7 +173,7 @@
             "298"
         ],
         [
-            "Jammu and Kashmir*",
+            "Jammu and Kashmir",
             "2,22,236",
             "4,140",
             "8,760",
@@ -293,7 +293,7 @@
             "2"
         ],
         [
-            "Odisha",
+            "Orissa",
             "1,55,707",
             "7,042",
             "21,298",
@@ -377,7 +377,7 @@
             "806"
         ],
         [
-            "Uttarakhand",
+            "Uttaranchal",
             "53,483",
             "4,785",
             "14,111",

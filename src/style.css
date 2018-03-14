@@ -101,7 +101,7 @@ nav a:hover {
 }
 
 .highlight_bar {
-    fill: rgb(3, 56, 70);
+    fill: green;
 }
 
 .highlight_state {

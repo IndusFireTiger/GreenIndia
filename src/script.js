@@ -15,29 +15,139 @@ function populateStates() {
     })
 }
 
+function clearGraph() {
+    let svg = d3.selectAll('svg')
+    let gs = svg.selectAll('g').selectAll('g')
+    let bars = svg.selectAll("rect.bar")
+
+    gs.data([]).exit().remove()
+    bars.data([]).exit().remove()
+}
 let plotStateGraph = function (state) {
     console.log(state)
     d3.json("States_wise_data.json", function (error, stateData) {
         if (error) {
             throw error
         }
-        console.log(state+" to find")
-        let svg = d3.selectAll('svg')
-        let gs = svg.selectAll('g').selectAll('g')
-        let bars = svg.selectAll("rect.bar")
-
-        gs.data([]).exit().remove()
-        bars.data([]).exit().remove()
+        console.log(state + " to find")
+        clearGraph()
         // document.getElementById('svg-graph').style.display ='none'
-        for(let i = 0; i < stateData.data.length; i++){
+        let currState;
+        for (let i = 0; i < stateData.data.length; i++) {
             console.log(stateData.data[i][0])
-            if(stateData.data[i][0] === state){
+            if (stateData.data[i][0] === state) {
                 console.log("found")
-                console.log("Data: "+stateData.data[i])
+                console.log("Data: " + stateData.data[i])
+                currState = stateData.data[i]
                 break
             }
         }
         // draw a pie chart
+        let data = []
+        let count = 0
+        for (let i = 2; i < 5; i++) {
+            let obj = {}
+            obj.label = stateData.fields[i].label
+            obj.value = currState[i].replace(',', '')
+            console.log("obj: " + obj.label + " " + currState[i] + " " + currState[i].replace(',', ''))
+            data[count] = obj
+            count++
+        }
+        console.log("state data" + data[0])
+
+        console.log("Labels:" + stateData.fields[0].label)
+        let svg = d3.select("svg#svg-graph"),
+            margin = 200,
+            width = svg.attr("width") - margin,
+            height = svg.attr("height") - margin
+        let xScale = d3.scaleBand().padding(0.5),
+            yScale = d3.scaleLinear()
+        let g = svg.append("g")
+            .attr("transform", "translate(100, 100)")
+
+        xScale.range([0, width]).domain(data.map(function (d) {
+            console.log('d:' + d.label)
+            return d.label
+        }))
+
+        yScale.range([height, 0]).domain([0, 1 + parseInt(d3.max(data, function (d) {
+            console.log('d:' + d.value)
+            return d.value
+        }))])
+
+        let xAxis_g = g.append("g")
+            .attr("transform", "translate(0," + height + ")")
+        xAxis_g.call(d3.axisBottom(xScale))
+        xAxis_g.append("text")
+            // .style("text-anchor", "middle")
+            .text("value")
+
+        let yAxis_g = g.append("g")
+        yAxis_g.call(d3.axisLeft(yScale).ticks(5))
+        yAxis_g.append("text")
+            .style("text-anchor", "middle")
+            .text("% of Forest Cover")
+
+        let bars = g.selectAll(".bar")
+
+        bars.data(data)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .on("mouseover", onMouseOver)
+            .on("mouseout", onMouseOut)
+            .attr("x", function (d) {
+                return xScale(d.label)
+            })
+            .attr("y", function (d) {
+                return yScale(d.value)
+            })
+            .attr("width", xScale.bandwidth())
+            .attr("height", function (d) {
+                return height - yScale(d.value)
+            })
+
+        function onMouseOver(d, i) {
+            d3.select(this).attr('class', 'highlight_bar')
+            d3.select(this)
+                .transition()
+                .duration(400)
+                .attr('width', xScale.bandwidth() + 5)
+                .attr("y", function (d) {
+                    return yScale(d.value) - 10
+                })
+                .attr("height", function (d) {
+                    return height - yScale(d.value) + 10
+                })
+
+            g.append("text")
+                .attr('class', 'val')
+                .attr('x', function () {
+                    return xScale(d.label)
+                })
+                .attr('y', function () {
+                    return yScale(d.value) - 15
+                })
+                .text(function () {
+                    return [d.value]
+                })
+        }
+
+        function onMouseOut(d, i) {
+            d3.select(this).attr('class', 'bar')
+            d3.select(this)
+                .transition()
+                .duration(400)
+                .attr('width', xScale.bandwidth())
+                .attr("y", function (d) {
+                    return yScale(d.value)
+                })
+                .attr("height", function (d) {
+                    return height - yScale(d.value)
+                })
+
+            d3.selectAll('.val')
+                .remove()
+        }
     })
 }
 
@@ -194,7 +304,7 @@ function plotIndiaMap() {
         proj.scale(6700)
         proj.translate([-1240, 720])
     }
-    
+
 }
 
 function populateOverview() {
