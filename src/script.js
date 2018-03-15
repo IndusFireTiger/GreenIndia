@@ -1,20 +1,3 @@
-function populateStates() {
-    let states = document.getElementById("states-list")
-
-    d3.json("States_wise_data.json", function (error, stateData) {
-        if (error) {
-            throw error
-        }
-        for (let i = 0; i < stateData.data.length; i++) {
-            var li = document.createElement("a")
-            li.setAttribute("id", i)
-            li.addEventListener("click", plotStateGraph)
-            li.appendChild(document.createTextNode(stateData.data[i][0]))
-            states.appendChild(li)
-        }
-    })
-}
-
 function clearGraph() {
     let svg = d3.selectAll('svg')
     let gs = svg.selectAll('g').selectAll('g')
@@ -70,9 +53,8 @@ let plotStateGraph = function (state) {
             return d.label
         }))
 
-        yScale.range([height, 0]).domain([0, 1 + parseInt(d3.max(data, function (d) {
-            console.log('d:' + d.value)
-            return d.value
+        yScale.range([height, 0]).domain([0, (d3.max(data, function (d) {
+            return parseInt(d.value)
         }))])
 
         let xAxis_g = g.append("g")
