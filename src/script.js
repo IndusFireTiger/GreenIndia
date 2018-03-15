@@ -153,17 +153,17 @@ function plotOverviewGraph() {
     let g = svg.append("g")
         .attr("transform", "translate(100, 100)")
 
-    d3.csv("Total Tree Cover in India.csv", function (error, data) {
+    d3.json("Total Tree Cover in India.json", function (error, data) {
         if (error) {
             throw error
         }
 
-        xScale.range([0, width]).domain(data.map(function (d) {
-            return d.year
+        xScale.range([0, width]).domain(data.data.map(function (d) {
+            return d[0]
         }))
 
-        yScale.range([height, 0]).domain([0, 1 + parseInt(d3.max(data, function (d) {
-            return d.share_TreeCover
+        yScale.range([height, 0]).domain([0, 1 + parseInt(d3.max(data.data, function (d) {
+            return d[3]
         }))])
 
         let xAxis_g = g.append("g")
@@ -191,20 +191,20 @@ function plotOverviewGraph() {
 
         let bars = g.selectAll(".bar")
 
-        bars.data(data)
+        bars.data(data.data)
             .enter().append("rect")
             .attr("class", "bar")
             .on("mouseover", onMouseOver)
             .on("mouseout", onMouseOut)
             .attr("x", function (d) {
-                return xScale(d.year)
+                return xScale(d[0])
             })
             .attr("y", function (d) {
-                return yScale(d.share_TreeCover)
+                return yScale(d[3])
             })
             .attr("width", xScale.bandwidth())
             .attr("height", function (d) {
-                return height - yScale(d.share_TreeCover)
+                return height - yScale(d[3])
             })
     })
 
@@ -215,22 +215,22 @@ function plotOverviewGraph() {
             .duration(400)
             .attr('width', xScale.bandwidth() + 5)
             .attr("y", function (d) {
-                return yScale(d.share_TreeCover) - 10
+                return yScale(d[3]) - 10
             })
             .attr("height", function (d) {
-                return height - yScale(d.share_TreeCover) + 10
+                return height - yScale(d[3]) + 10
             })
 
         g.append("text")
             .attr('class', 'val')
             .attr('x', function () {
-                return xScale(d.year)
+                return xScale(d[0])
             })
             .attr('y', function () {
-                return yScale(d.share_TreeCover) - 15
+                return yScale(d[3]) - 15
             })
             .text(function () {
-                return [d.share_TreeCover + " %"]
+                return [d[3] + " %"]
             })
     }
 
@@ -241,10 +241,10 @@ function plotOverviewGraph() {
             .duration(400)
             .attr('width', xScale.bandwidth())
             .attr("y", function (d) {
-                return yScale(d.share_TreeCover)
+                return yScale(d[3])
             })
             .attr("height", function (d) {
-                return height - yScale(d.share_TreeCover)
+                return height - yScale(d[3])
             })
 
         d3.selectAll('.val')
