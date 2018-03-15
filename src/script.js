@@ -55,199 +55,96 @@ function plotIndiaMap() {
 
 }
 
-function plotOverviewGraph() {
-    let svg = d3.select("svg"),
+let selectOverviewData = (data) => {
+    let labels = {
+        x: data.fields[0].label,
+        y: data.fields[3].label
+    }
+    let myData = data.data
+    let dataForGraph = []
+    myData.forEach(ele => {
+        let obj = {}
+        obj.label = ele[0]
+        obj.value = ele[3]
+        dataForGraph.push(obj)
+    })
+    return [labels, dataForGraph]
+}
+
+let selectStateData = (stateData, state) => {
+    let currState;
+    for (let i = 0; i < stateData.data.length; i++) {
+        if (stateData.data[i][0] === state) {
+            currState = stateData.data[i]
+            break
+        }
+    }
+    let labels = {
+        x: 'Forest Types',
+        y: 'Area'
+    }
+    let dataForGraph = []
+    for (let i = 2; i < 5; i++) {
+        let obj = {}
+        obj.label = stateData.fields[i].label
+        obj.value = currState[i].replace(',', '')
+        dataForGraph.push(obj)
+    }
+    return [labels, dataForGraph]
+}
+
+const graphType = {
+    'overview': selectOverviewData,
+    'state': selectStateData
+}
+
+function plotGraph(type, svg_element, file, state) {
+    let svg = d3.select(svg_element),
+        g = svg.append("g").attr("transform", "translate(100, 100)"),
         margin = 200,
         width = svg.attr("width") - margin,
-        height = svg.attr("height") - margin
-    let xScale = d3.scaleBand().padding(0.5),
+        height = svg.attr("height") - margin,
+        xScale = d3.scaleBand().padding(0.5),
         yScale = d3.scaleLinear()
-    let g = svg.append("g")
-        .attr("transform", "translate(100, 100)")
 
-    d3.json("Total Tree Cover in India.json", function (error, data) {
+    d3.json(file, function (error, data) {
         if (error) {
             throw error
         }
 
-        xScale.range([0, width]).domain(data.data.map(function (d) {
-            return d[0]
-        }))
-
-        yScale.range([height, 0]).domain([0, 1 + parseInt(d3.max(data.data, function (d) {
-            return d[3]
-        }))])
-
-        let xAxis_g = g.append("g")
-            .attr("transform", "translate(0," + height + ")")
-        xAxis_g.call(d3.axisBottom(xScale))
-        xAxis_g.append("text")
-            .attr("y", height - 250)
-            .attr("x", width - 100)
-            .attr("dx", "5em")
-            .attr("text-anchor", "end")
-            .attr("stroke", "black")
-            .style("font-size","16px")
-            .text("Year")
-
-        let yAxis_g = g.append("g")
-        yAxis_g.call(d3.axisLeft(yScale).ticks(5))
-        yAxis_g.append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", 6)
-            .attr("dy", "-4em")
-            .attr("text-anchor", "end")
-            .attr("stroke", "black")
-            .style("font-size","16px")
-            .text("Forest Cover in %")
-
-        let bars = g.selectAll(".bar")
-
-        bars.data(data.data)
-            .enter().append("rect")
-            .attr("class", "bar")
-            .on("mouseover", onMouseOver)
-            .on("mouseout", onMouseOut)
-            .attr("x", function (d) {
-                return xScale(d[0])
-            })
-            .attr("y", function (d) {
-                return yScale(d[3])
-            })
-            .attr("width", xScale.bandwidth())
-            .attr("height", function (d) {
-                return height - yScale(d[3])
-            })
+        let selecteData = graphType[type](data, state)
+        let labels = selecteData[0],
+            dataForGraph = selecteData[1]
+        console.log(dataForGraph)
+        initializeScale(dataForGraph, labels)
+        plotBars(g, dataForGraph)
     })
 
-    function onMouseOver(d, i) {
-        d3.select(this).attr('class', 'highlight_bar')
-        d3.select(this)
-            .transition()
-            .duration(400)
-            .attr('width', xScale.bandwidth() + 5)
-            .attr("y", function (d) {
-                return yScale(d[3]) - 10
-            })
-            .attr("height", function (d) {
-                return height - yScale(d[3]) + 10
-            })
+    function initializeScale(data, axisLabels) {
+        console.log("initializeScale")
+        xScale
+            .range([0, width])
+            .domain(data.map(function (d) {
+                return d.label
+            }))
 
-        g.append("text")
-            .attr('class', 'val')
-            .attr('x', function () {
-                return xScale(d[0])
-            })
-            .attr('y', function () {
-                return yScale(d[3]) - 15
-            })
-            .text(function () {
-                return [d[3] + " %"]
-            })
-    }
+        yScale
+            .range([height, 0])
+            .domain([0, 1 + (d3.max(data, function (d) {
+                return parseInt(d.value)
+            }))])
 
-    function onMouseOut(d, i) {
-        d3.select(this).attr('class', 'bar')
-        d3.select(this)
-            .transition()
-            .duration(400)
-            .attr('width', xScale.bandwidth())
-            .attr("y", function (d) {
-                return yScale(d[3])
-            })
-            .attr("height", function (d) {
-                return height - yScale(d[3])
-            })
-
-        d3.selectAll('.val')
-            .remove()
-    }
-}
-
-function clearGraph() {
-    let svg = d3.selectAll('svg')
-    let gs = svg.selectAll('g').selectAll('g')
-    let bars = svg.selectAll("rect.bar")
-
-    gs.data([]).exit().remove()
-    bars.data([]).exit().remove()
-}
-let plotStateGraph = function (state) {
-    console.log(state)
-    d3.json("States_wise_data.json", function (error, stateData) {
-        if (error) {
-            throw error
-        }
-        console.log(state + " to find")
-        clearGraph()
-        // document.getElementById('svg-graph').style.display ='none'
-        let currState;
-        for (let i = 0; i < stateData.data.length; i++) {
-            console.log(stateData.data[i][0])
-            if (stateData.data[i][0] === state) {
-                console.log("found")
-                console.log("Data: " + stateData.data[i])
-                currState = stateData.data[i]
-                break
-            }
-        }
-        // draw a pie chart
-        let data = []
-        let count = 0
-        for (let i = 2; i < 5; i++) {
-            let obj = {}
-            obj.label = stateData.fields[i].label
-            obj.value = currState[i].replace(',', '')
-            console.log("obj: " + obj.label + " " + currState[i] + " " + currState[i].replace(',', ''))
-            data[count] = obj
-            count++
-        }
-        console.log("state data" + data[0])
-
-        console.log("Labels:" + stateData.fields[0].label)
-        let svg = d3.select("svg#svg-graph"),
-            margin = 200,
-            width = svg.attr("width") - margin,
-            height = svg.attr("height") - margin
-        let xScale = d3.scaleBand().padding(0.5),
-            yScale = d3.scaleLinear()
-        let g = svg.append("g")
-            .attr("transform", "translate(100, 100)")
-
-        xScale.range([0, width]).domain(data.map(function (d) {
-            console.log('d:' + d.label)
-            return d.label
-        }))
-
-        yScale.range([height, 0]).domain([0, (d3.max(data, function (d) {
-            return parseInt(d.value)
-        }))])
-
-        let xAxis_g = g.append("g")
-            .attr("transform", "translate(0," + height + ")")
+        let xAxis_g = g.append("g").attr("transform", "translate(0," + height + ")")
         xAxis_g.call(d3.axisBottom(xScale))
-        xAxis_g.append("text")
-            .attr("y", height - 250)
-            .attr("x", width - 100)
-            .attr("dx", "5em")
-            .attr("text-anchor", "end")
-            .attr("stroke", "black")
-            .style("font-size","16px")
-            .text("Forest Type")
+        append_xAxis_label(xAxis_g, axisLabels.x)
 
         let yAxis_g = g.append("g")
         yAxis_g.call(d3.axisLeft(yScale).ticks(5))
-        yAxis_g.append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", 6)
-            .attr("dy", "-4em")
-            .attr("text-anchor", "end")
-            .attr("stroke", "black")
-            .style("font-size","16px")
-            .text("Geographical Area")
+        append_yAxis_label(yAxis_g, axisLabels.y)
+    }
 
-        let bars = g.selectAll(".bar")
-
+    function plotBars(grp, data) {
+        let bars = grp.selectAll(".bar")
         bars.data(data)
             .enter().append("rect")
             .attr("class", "bar")
@@ -263,50 +160,91 @@ let plotStateGraph = function (state) {
             .attr("height", function (d) {
                 return height - yScale(d.value)
             })
+    }
 
-        function onMouseOver(d, i) {
-            d3.select(this).attr('class', 'highlight_bar')
-            d3.select(this)
-                .transition()
-                .duration(400)
-                .attr('width', xScale.bandwidth() + 5)
-                .attr("y", function (d) {
-                    return yScale(d.value) - 10
-                })
-                .attr("height", function (d) {
-                    return height - yScale(d.value) + 10
-                })
+    function append_yAxis_label(axis, label) {
+        axis.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", "-4em")
+            .attr("text-anchor", "end")
+            .attr("stroke", "black")
+            .style("font-size", "16px")
+            .text(label)
+    }
 
-            g.append("text")
-                .attr('class', 'val')
-                .attr('x', function () {
-                    return xScale(d.label)
-                })
-                .attr('y', function () {
-                    return yScale(d.value) - 15
-                })
-                .text(function () {
-                    return [d.value]
-                })
-        }
+    function append_xAxis_label(axis, label) {
+        axis.append("text")
+            .attr("y", height - 250)
+            .attr("x", width - 100)
+            .attr("dx", "5em")
+            .attr("text-anchor", "end")
+            .attr("stroke", "black")
+            .style("font-size", "16px")
+            .text(label)
+    }
 
-        function onMouseOut(d, i) {
-            d3.select(this).attr('class', 'bar')
-            d3.select(this)
-                .transition()
-                .duration(400)
-                .attr('width', xScale.bandwidth())
-                .attr("y", function (d) {
-                    return yScale(d.value)
-                })
-                .attr("height", function (d) {
-                    return height - yScale(d.value)
-                })
+    function onMouseOver(d, i) {
+        d3.select(this).attr('class', 'highlight_bar')
+        d3.select(this)
+            .transition()
+            .duration(400)
+            .attr('width', xScale.bandwidth() + 5)
+            .attr("y", function (d) {
+                return yScale(d.value) - 10
+            })
+            .attr("height", function (d) {
+                return height - yScale(d.value) + 10
+            })
 
-            d3.selectAll('.val')
-                .remove()
-        }
-    })
+        g.append("text")
+            .attr('class', 'val')
+            .attr('x', function () {
+                return xScale(d.label)
+            })
+            .attr('y', function () {
+                return yScale(d.value) - 15
+            })
+            .text(function () {
+                return [d.value]
+            })
+    }
+
+    function onMouseOut(d, i) {
+        d3.select(this).attr('class', 'bar')
+        d3.select(this)
+            .transition()
+            .duration(400)
+            .attr('width', xScale.bandwidth())
+            .attr("y", function (d) {
+                return yScale(d.value)
+            })
+            .attr("height", function (d) {
+                return height - yScale(d.value)
+            })
+
+        d3.selectAll('.val')
+            .remove()
+    }
+}
+
+function plotOverviewGraph() {
+    plotGraph('overview', 'svg', "Total Tree Cover in India.json")
+}
+
+function clearGraph() {
+    let svg = d3.selectAll('svg')
+    let gs = svg.selectAll('g g')
+    let bars = svg.selectAll("rect.bar")
+
+    gs.data([]).exit().remove()
+    bars.data([]).exit().remove()
+}
+
+let plotStateGraph = function (state) {
+    clearGraph()
+    console.log(state)
+    plotGraph('state', 'svg#svg-graph', "States_wise_data.json", state)
 }
 
 function populateOverview() {
