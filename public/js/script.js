@@ -19,6 +19,16 @@ function plotIndiaMap() {
     var offsetL = document.getElementById('chart').offsetLeft + 10
     var offsetT = document.getElementById('chart').offsetTop + -30
 
+    fetch('states.json')
+        .then(function (response) {
+            //to do
+            console.log('fetched map.json')
+            console.log(response.json())
+            // response.json()
+        })
+        .catch(function (error) {
+            console.log('could not fetch states.json')
+        })
     d3.json("states.json", function (json) {
         states = json.features
         india.selectAll("path")
@@ -229,7 +239,7 @@ function plotGraph(type, svg_element, file, state) {
 }
 
 function plotOverviewGraph() {
-    plotGraph('overview', 'svg', "Total Tree Cover in India.json")
+    plotGraph('overview', 'svg', "India_Overview.json")
 }
 
 function clearGraph() {
@@ -260,7 +270,7 @@ function tabAction(event, where) {
     // console.log("url:" + document.URL)
     // var i, tabcontent, tablinks
     // tabcontent = document.getElementsByClassName("content")
-    // for (i = 0 i < tabcontent.length; i++) {
+    // for (i = 0; i < tabcontent.length; i++) {
     //     tabcontent[i].style.display = "none"
     // }
     // tablinks = document.getElementsByClassName("tabLinks")

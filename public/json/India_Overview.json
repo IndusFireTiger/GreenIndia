@@ -17,7 +17,7 @@
         },
         {
             "id": "d",
-            "label": "%  Tree Cover to Geographical Area",
+            "label": "% Tree Cover to Geographical Area",
             "type": "string"
         },
         {
