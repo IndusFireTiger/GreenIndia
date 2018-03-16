@@ -1,0 +1,66 @@
+{
+    "fields": [
+        {
+            "id": "a",
+            "label": "Species",
+            "type": "string"
+        },
+        {
+            "id": "b",
+            "label": "Total volume (Percentage)",
+            "type": "string"
+        },
+        {
+            "id": "c",
+            "label": "Total stems (Percentage)",
+            "type": "string"
+        }
+    ],
+    "data": [
+        [
+            "Mangifera indica",
+            "10.36",
+            "7.11"
+        ],
+        [
+            "Cocos nucifera",
+            "5.71",
+            "4.99"
+        ],
+        [
+            "Madhuca latifolia",
+            "4.18",
+            "0.85"
+        ],
+        [
+            "Azadirachta indica",
+            "4.15",
+            "4.05"
+        ],
+        [
+            "Borassus flabellifer",
+            "3.64",
+            "1.89"
+        ],
+        [
+            "Pinus roxburghii",
+            "3.35",
+            "3.83"
+        ],
+        [
+            "Syzygium cumini",
+            "3.16",
+            "1.27"
+        ],
+        [
+            "Ficus species",
+            "2.42",
+            "0.64"
+        ],
+        [
+            "Acacia arabica",
+            "2.35",
+            "3.59"
+        ]
+    ]
+}
