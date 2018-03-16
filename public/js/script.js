@@ -21,7 +21,6 @@ function plotIndiaMap() {
 
     fetch('states.json')
         .then(function (response) {
-            //to do
             console.log('fetched map.json')
             console.log(response.json())
             // response.json()
