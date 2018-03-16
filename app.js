@@ -1,58 +1,59 @@
 "use strict";
-let http = require("http");
-let fs = require("fs");
-let path = require("path");
+let http = require("http")
+let fs = require("fs")
+let path = require("path")
 
 let server = http.createServer(function(req, res) {
-  console.log("request was made : " + req.url);
+  console.log("request was made : " + req.url)
   res.writeHead(200, {
     "Content-Type": "text/html"
-  });
+  })
 
-  let fileType = path.extname(req.url);
-  let resType;
+  let fileType = path.extname(req.url)
+  let resType
   switch (fileType) {
     case ".js":
-      resType = "text/javascript";
-      break;
+      resType = "text/javascript"
+      break
     case ".css":
-      resType = "text/css";
-      break;
+      resType = "text/css"
+      break
     case ".json":
-      resType = "application/json";
-      break;
+      resType = "application/json"
+      break
     case ".png":
-      resType = "image/png";
-      break;
+      resType = "image/png"
+      break
     case ".jpg":
-      resType = "image/jpg";
-      break;
+      resType = "image/jpg"
+      break
     case ".svg":
-      resType = "image/svg";
-      break;
+      resType = "image/svg"
+      break
     default:
-      resType = "text/html";
+      resType = "text/html"
   }
-  let filePath = path.join(".", req.url);
+  
+  let filePath = path.join(".", req.url)
   if (filePath === "./") {
-    filePath = "./index.html";
+    filePath = "./index.html"
   } else {
-    filePath = path.join(__dirname, "public", fileType.slice(1), req.url);
+    filePath = path.join(__dirname, "public", fileType.slice(1), req.url)
   }
 
-  console.log("filepath:" + filePath);
-  let fileout = fs.createReadStream(filePath);
+  console.log("filepath:" + filePath)
+  let fileout = fs.createReadStream(filePath)
 
   fileout
     .on("error", function(error) {
-      console.log("Error:", error.message);
+      console.log("Error:", error.message)
     })
     .on("data", function(data) {
       res.writeHead(200, {
         "Content-Type": resType
-      });
+      })
     })
-    .pipe(res);
+    .pipe(res)
 
   // if (req.url == '/home' || req.url === '/') {
   //     console.log('dirname' + __dirname)
@@ -71,12 +72,12 @@ let server = http.createServer(function(req, res) {
   //     })
   //     let data = fs.createReadStream(__dirname + '/States_wise_data.json').pipe(res)
   // }
-});
+})
 
-let port = 5432;
+let port = 5432
 server.listen(port, err => {
   if (err) {
-    return console.log("something bad happened", err);
+    return console.log("something bad happened", err)
   }
-  console.log("server is listening on " + port);
-});
+  console.log("server is listening on " + port)
+})
