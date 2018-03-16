@@ -1,10 +1,10 @@
-"use strict";
+"use strict"
 let http = require("http")
 let fs = require("fs")
 let path = require("path")
 
 let server = http.createServer(function(req, res) {
-  console.log("request was made : " + req.url)
+  console.log("a request was made : " + req.url)
   res.writeHead(200, {
     "Content-Type": "text/html"
   })
@@ -33,7 +33,7 @@ let server = http.createServer(function(req, res) {
     default:
       resType = "text/html"
   }
-  
+
   let filePath = path.join(".", req.url)
   if (filePath === "./") {
     filePath = "./index.html"
@@ -43,41 +43,20 @@ let server = http.createServer(function(req, res) {
 
   console.log("filepath:" + filePath)
   let fileout = fs.createReadStream(filePath)
-
+  res.writeHead(200, {
+    "Content-Type": resType
+  })
   fileout
     .on("error", function(error) {
       console.log("Error:", error.message)
     })
-    .on("data", function(data) {
-      res.writeHead(200, {
-        "Content-Type": resType
-      })
-    })
     .pipe(res)
-
-  // if (req.url == '/home' || req.url === '/') {
-  //     console.log('dirname' + __dirname)
-  //     res.writeHead(200, {
-  //         'Content-Type': 'text/html'
-  //     })
-  //     fs.createReadStream(__dirname + '/html/index.html').pipe(res)
-  // } else if (req.url == '/public/html/ForestInIndia.html') {
-  //     res.writeHead(200, {
-  //         'Content-Type': 'text/html'
-  //     })
-  //     fs.createReadStream(__dirname + '/ForestInIndia.html').pipe(res)
-  // } else if (req.url == '/StateData') {
-  //     res.writeHead(200, {
-  //         'Content-Type': 'application/json'
-  //     })
-  //     let data = fs.createReadStream(__dirname + '/States_wise_data.json').pipe(res)
-  // }
 })
 
 let port = 5432
 server.listen(port, err => {
   if (err) {
-    return console.log("something bad happened", err)
+    return console.log("error on server", err)
   }
-  console.log("server is listening on " + port)
+  console.log("Server is listening on " + port)
 })
